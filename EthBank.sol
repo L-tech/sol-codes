@@ -112,9 +112,10 @@ contract SmartBankAccount {
         return ceth.exchangeRateStored();
     }
     
-    function withdraw() public payable {
+    function withdraw(uint _amount) public payable {
+        require(balances[msg.sender] >= _amount, "Not enough balance");
         ceth.redeem(balances[msg.sender]);
-        balances[msg.sender] = 0;
+        balances[msg.sender] = balances[msg.sender] - _amount;
     }
     
     function addMoneyToContract() public payable {
