@@ -8,6 +8,12 @@ contract Arome {
         uint256 tokenTotalSupply = 10000000;
         mapping(address => uint256) balance;
 
+        mapping(uint => bool) blockMined;
+        uint totalMinted = 1000000 * 1e8;
+
+        event Transfer(address indexed _from, address indexed _to, uint256 _value);
+        event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+
     function name() public view returns (string memory){
         return tokenName;
     }
@@ -37,15 +43,40 @@ contract Arome {
     }
     
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
+        if(balance[_from] < _value)
+            return false;
         
+        if(allowances[_from][msg.sender] < _value)
+            return false;
+            
+        balance[_from] -= _value;
+        balance[_to] += _value;
+        allowances[_from][msg.sender] -= _value;
+        
+        emit Transfer(_from, _to, _value);
+        
+        return true;
     }
     
+    mapping(address => mapping(address => uint)) allowances;
+    
+    
     function approve(address _spender, uint256 _value) public returns (bool success) {
-        
+        allowances[msg.sender][_spender] = _value;
+        emit Approval(msg.sender, _spender, _value);
     }
     
     function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
-        
+        return allowances[_owner][_spender];
+    } //1M that has been minted to the deployer in constructor()
+    
+    function mine() public returns(bool success){
+        if(blockMined[block.number]){
+            return false;
+        }
+        balance[msg.sender] = balance[msg.sender] + 10*1e8;
+        totalMinted = totalMinted + 10*1e8;
+        return true;
     }
     
     
