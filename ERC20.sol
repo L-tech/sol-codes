@@ -2,17 +2,17 @@
 pragma solidity >=0.7.0 <0.9.0;
 interface ECM {
 
-    sendNotification(address user, string memory title, string memory text, string memory image) external payable;
-    getUserPrice(address user) external;
+    function sendNotification(address user, string memory title, string memory text, string memory image) external payable;
+    function getUserPrice(address user) external returns (uint256);
 
 }
 
 contract Arome {
+
     ECM ecm = ECM(0x2F04837B299d8eD4cd8d6bBa69F48EdFEc401daD);
 
-
-    string tokenName;
-    string tokenSymbol;
+    string tokenName = "Arome";
+    string tokenSymbol = "ARM";
     uint8 tokenDecimal = 8;
     uint256 tokenTotalSupply = 10000000;
     mapping(address => uint256) balance;
@@ -22,6 +22,10 @@ contract Arome {
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+
+    constructor(){
+        balance[msg.sender] = 1000000 * 1e8;
+    }
 
     function name() public view returns (string memory){
         return tokenName;
@@ -70,11 +74,11 @@ contract Arome {
     mapping(address => mapping(address => uint)) allowances;
     
     
-    function approve(address _spender, uint256 _value) public {
+    function approve(address _spender, uint256 _value) payable public {
         allowances[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
-        if(msg.value >= ecm.getUserPrice(spender)) {
-            ecm.sendNotification{value: msg.value} (...);
+        if(msg.value >= ecm.getUserPrice(_spender)) {
+            ecm.sendNotification{value: msg.value};
         }
     }
     
