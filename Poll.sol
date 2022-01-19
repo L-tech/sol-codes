@@ -68,20 +68,22 @@ contract Poll {
         proposals[proposal].totalVotes += sender.weight;
     }
 
-    function winningProposal() public view returns (uint winningProposal_)
+    function winningProposal() public view returns (uint _winningProposal)
     {
         uint winningVoteCount = 0;
         for (uint p = 0; p < proposals.length; p++) {
             if (proposals[p].totalVotes > winningVoteCount) {
                 winningVoteCount = proposals[p].totalVotes;
-                winningProposal_ = p;
+                _winningProposal = p;
             }
         }
     }
 
-    function winnerName() external view returns (string memory winnerName_)
+    function winnerName() external view returns (string memory _winnerName)
     {
-        winnerName_ = proposals[winningProposal()].name;
+        _winnerName = proposals[winningProposal()].name;
     }
+
+    
 
 }
