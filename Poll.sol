@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: UNLINCENSED
 pragma solidity ^0.8.7;
-
 contract Poll {
     struct Voter {
         uint weight;
@@ -84,6 +83,20 @@ contract Poll {
         _winnerName = proposals[winningProposal()].name;
     }
 
-    
+    function winningMargin() external view returns (uint _percentage) {
+        
+        uint winningProposalIndex= winningProposal();
+        uint totalVotesCount = 0;
+
+        for(uint i = 0; i < proposals.length; i++) {
+            if(i != winningProposalIndex) {
+                totalVotesCount += proposals[i].totalVotes;
+            }
+            
+        }
+
+
+
+    }
 
 }
