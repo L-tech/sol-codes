@@ -58,5 +58,14 @@ contract Purchase {
         state = State.Inactive;
         seller.transfer(address(this).balance);
     }
+    /// Confirm the purchase as buyer.
+    /// Transaction has to include `2 * value` ether.
+    /// The ether will be locked until confirmReceived is called.
+    function confirmPurchase() external inState(State.Created) doubleValue payable
+    {
+        emit PurchaseConfirmed();
+        buyer = payable(msg.sender);
+        state = State.Locked;
+    }
     
 }
