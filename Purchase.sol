@@ -67,5 +67,14 @@ contract Purchase {
         buyer = payable(msg.sender);
         state = State.Locked;
     }
+    /// Confirm that you (the buyer) received the item.
+    /// This will release the locked ether.
+    function confirmReceived() external onlyBuyer inState(State.Locked)
+    {
+        emit ItemReceived();
+        state = State.Release;
+
+        buyer.transfer(value);
+    }
     
 }
