@@ -84,19 +84,17 @@ contract Poll {
     }
 
     function winningMargin() external view returns (uint _percentage) {
+        // return margin of victory in percentage
+        uint winningProposalVotes= proposals[winningProposal()].totalVotes;
         
-        uint winningProposalIndex= winningProposal();
         uint totalVotesCount = 0;
-
         for(uint i = 0; i < proposals.length; i++) {
-            if(i != winningProposalIndex) {
-                totalVotesCount += proposals[i].totalVotes;
-            }
+            totalVotesCount += proposals[i].totalVotes; 
             
         }
+        uint margin = (winningProposalVotes * 100);
 
-
-
+        return (margin / totalVotesCount);
     }
 
 }
