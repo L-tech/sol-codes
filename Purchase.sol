@@ -76,5 +76,14 @@ contract Purchase {
 
         buyer.transfer(value);
     }
+    /// This function refunds the seller, i.e.
+    /// pays back the locked funds of the seller.
+    function refundSeller() external onlySeller inState(State.Release)
+    {
+        emit SellerRefunded();
+        state = State.Inactive;
+
+        seller.transfer(3 * value);
+    }
     
 }
