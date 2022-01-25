@@ -295,5 +295,131 @@ contract ElimLoot is ERC721URIStorage {
         
         return (playerArmors, elimArmors, arrayLengths);
     }
+    function fight(uint256 tokenId, uint256 accuracyBoosterInElimGold) public returns(string memory){
+        require(loot.ownerOf(tokenId) == msg.sender || mloot.ownerOf(tokenId) == msg.sender, "You must be the owner of the loot to play");
+        require(elimLootGold.allowance(msg.sender, address(this)) >= accuracyBoosterInElimGold, "Accuracy Booster needs approval first");
+        require(!elimDefeated[tokenId], "Elim already defeated");
+        elimLootGold.transferFrom(msg.sender, address(this), accuracyBoosterInElimGold);
+        lootBox += accuracyBoosterInElimGold;
+        
+        
+        uint elimLootId = 1300000 + random2(1300000, 0);
+        
+        uint playerScore = 0;
+        uint elimScore = 0;
+        
+        //weapon
+        uint playerWeapon = pluckIndex(tokenId, "WEAPON", weapons.length);
+        uint elimWeapon = pluckIndex(elimLootId, "WEAPON", weapons.length);
+
+        uint[4] memory playerArmors;
+        uint[4] memory elimArmors;
+        uint[4] memory arrayLengths;
+        (playerArmors, elimArmors, arrayLengths) = getArmors(tokenId, elimLootId);
+        
+        uint totalAccuracy = 0;
+
+        for(uint i = 0; i < 4; i+= 1){
+            uint accuracy = 0;
+            if(1000000 - (random2(1000, i)*random2(accuracyBoosterInElimGold, i)/1e18) > 0)
+                accuracy = 1000000 - (random2(1000, i)*random2(accuracyBoosterInElimGold, i)/1e18);
+            totalAccuracy += accuracy;
+            elimScore += 10 + (((playerArmors[i] + elimWeapon)%arrayLengths[i]) * accuracy * 10)/1000000;
+            playerScore += 10 + (((elimArmors[i] + playerWeapon)%arrayLengths[i]) * accuracy * 10)/1000000 - greatness(elimArmors[i]);
+        }
+
+        if(elimScore > playerScore){
+            emit PlayerDefeated(msg.sender, elimLootId, 0);
+            return string(abi.encodePacked("You lost to elim#",toString(elimLootId)));
+        }
+
+        _safeMint(msg.sender, elimLootId);
+
+        uint earnings = 0;
+        elimLootGold.mint(msg.sender, (playerScore - elimScore) * 1e18);
+        earnings += (playerScore - elimScore) * 1e18;
+        elimLootGold.transfer(address(this), lootBox);
+        earnings += lootBox;
+        lootBox = 0;
+        
+        emit ElimDefeated(elimLootId, msg.sender, int(playerScore - elimScore));
+        
+        return string(abi.encodePacked("You earned ",toString(earnings), " elim gold and elim loot #", toString(elimLootId)));
+        
+    }
+    
+    
+
+    ElimLootGold elimLootGold;
+    
+    constructor() ERC721("ElimLoot", "B-LOOT") {
+        elimLootGold = new ElimLootGold(msg.sender);
+    }
+    
+    function getElimGoldAddress() public view returns(address) {
+        return address(elimLootGold);
+    }
+}
+
+
+/// [MIT License]
+/// @title Base64
+/// @notice Provides a function for encoding some bytes in base64
+/// @author Brecht Devos <brecht@loopring.org>
+library Base64 {
+    bytes internal constant TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+    /// @notice Encodes some bytes to the base64 representation
+    function encode(bytes memory data) internal pure returns (string memory) {
+        uint256 len = data.length;
+        if (len == 0) return "";
+
+        // multiply by 4/3 rounded up
+        uint256 encodedLen = 4 * ((len + 2) / 3);
+
+        // Add some extra buffer at the end
+        bytes memory result = new bytes(encodedLen + 32);
+
+        bytes memory table = TABLE;
+
+        assembly {
+            let tablePtr := add(table, 1)
+            let resultPtr := add(result, 32)
+
+            for {
+                let i := 0
+            } lt(i, len) {
+
+            } {
+                i := add(i, 3)
+                let input := and(mload(add(data, i)), 0xffffff)
+
+                let out := mload(add(tablePtr, and(shr(18, input), 0x3F)))
+                out := shl(8, out)
+                out := add(out, and(mload(add(tablePtr, and(shr(12, input), 0x3F))), 0xFF))
+                out := shl(8, out)
+                out := add(out, and(mload(add(tablePtr, and(shr(6, input), 0x3F))), 0xFF))
+                out := shl(8, out)
+                out := add(out, and(mload(add(tablePtr, and(input, 0x3F))), 0xFF))
+                out := shl(224, out)
+
+                mstore(resultPtr, out)
+
+                resultPtr := add(resultPtr, 4)
+            }
+
+            switch mod(len, 3)
+            case 1 {
+                mstore(sub(resultPtr, 2), shl(240, 0x3d3d))
+            }
+            case 2 {
+                mstore(sub(resultPtr, 1), shl(248, 0x3d))
+            }
+
+            mstore(result, encodedLen)
+        }
+
+        return string(result);
+    }
     
 }
