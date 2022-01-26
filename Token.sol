@@ -1,0 +1,29 @@
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.8.0 <0.9.0;
+
+library Balances {
+    function move(mapping(address => uint256) storage balances, address from, address to, uint amount) internal {
+        require(balances[from] >= amount);
+        require(balances[to] + amount >= balances[to]);
+        balances[from] -= amount;
+        balances[to] += amount;
+    }
+}
+
+contract Token {
+    mapping(address => uint256) balances;
+    using Balances for *;
+    mapping(address => mapping (address => uint256)) allowed;
+
+    event Transfer(address from, address to, uint amount);
+    event Approval(address owner, address spender, uint amount);
+
+    function transfer(address to, uint amount) external returns (bool success) {
+        balances.move(msg.sender, to, amount);
+        emit Transfer(msg.sender, to, amount);
+        return true;
+
+    }
+
+    
+}
