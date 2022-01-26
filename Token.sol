@@ -24,6 +24,18 @@ contract Token {
         return true;
 
     }
+    function balanceOf(address tokenOwner) external view returns (uint balance) {
+        return balances[tokenOwner];
+    }
+    function transferFrom(address from, address to, uint amount) external returns (bool success) {
+        require(allowed[from][msg.sender] >= amount);
+        allowed[from][msg.sender] -= amount;
+        balances.move(from, to, amount);
+        emit Transfer(from, to, amount);
+        return true;
+    }
+
+    
 
     
 }
