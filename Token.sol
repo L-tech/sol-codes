@@ -34,7 +34,12 @@ contract Token {
         emit Transfer(from, to, amount);
         return true;
     }
-
+    function approve(address spender, uint tokens) external returns (bool success) {
+        require(allowed[msg.sender][spender] == 0, "");
+        allowed[msg.sender][spender] = tokens;
+        emit Approval(msg.sender, spender, tokens);
+        return true;
+    }
     
 
     
