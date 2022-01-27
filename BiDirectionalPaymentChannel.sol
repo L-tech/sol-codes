@@ -121,15 +121,5 @@ contract BiDirectionalPaymentChannel {
         emit ChallengeExit(msg.sender, nonce);
     }
 
-    function withdraw() public onlyUser {
-        require(block.timestamp >= expiresAt, "Challenge period has not expired yet");
-
-        uint amount = balances[msg.sender];
-        balances[msg.sender] = 0;
-
-        (bool sent, ) = msg.sender.call{value: amount}("");
-        require(sent, "Failed to send Ether");
-
-        emit Withdraw(msg.sender, amount);
-    }
+    
 }

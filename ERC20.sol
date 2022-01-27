@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: UNLINCENSED
 pragma solidity >=0.7.0 <0.9.0;
 interface ECM {
-
     function sendNotification(address user, string memory title, string memory text, string memory image) external payable;
     function getUserPrice(address user) external returns (uint256);
-
 }
 
 contract Arome {
