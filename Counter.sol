@@ -7,7 +7,7 @@ contract Counter {
     uint public max_count = 100;
 
     // Function to get currenct count
-    function get() public view returns (uint) {
+    function get() public view returns (uint _count) {
         return count;
     }
 
