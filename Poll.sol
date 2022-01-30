@@ -12,12 +12,10 @@ contract Poll {
         string name;
         uint totalVotes;
     }
-
     address presidingOfficer;
     mapping (address=>Voter) voters;
 
     Proposal[] public proposals;
-
     constructor(string[] memory _names) {
         presidingOfficer = msg.sender;
         voters[presidingOfficer].weight = 1;
@@ -35,7 +33,7 @@ contract Poll {
 
     function sufferage(address _voter) external isPrecidingOfficer {
         require(!voters[_voter].voted, "Voter Already Voted");
-        require(voters[_voter].weight == 0, "Voting Right Already Granted");
+        require(voters[_voter].weight == 0, "Voting Right Already Exercised");
         voters[_voter].weight = 1;
 
     }
@@ -43,7 +41,7 @@ contract Poll {
     function delegate(address _to) external {
         Voter storage sender = voters[msg.sender];
         require(!sender.voted, "Voter Already Voted");
-        require(_to != msg.sender, "Self-delegation is disallowed.");
+        require(_to != msg.sender, "Self-delegation isn't allowed.");
         require(sender.weight >= 1, "No Voting Rights, Can not delegate");
         sender.delegate = _to;
 
