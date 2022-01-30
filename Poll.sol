@@ -18,7 +18,6 @@ contract Poll {
 
     Proposal[] public proposals;
 
-
     constructor(string[] memory _names) {
         presidingOfficer = msg.sender;
         voters[presidingOfficer].weight = 1;
@@ -80,7 +79,7 @@ contract Poll {
 
     function winnerName() external view returns (string memory _winnerName)
     {
-        _winnerName = proposals[winningProposal()].name;
+        return proposals[winningProposal()].name;
     }
 
     function winningMargin() external view returns (uint _percentage) {
