@@ -82,7 +82,6 @@ contract Purchase {
     {
         emit SellerRefunded();
         state = State.Inactive;
-
         seller.transfer(3 * value);
     }
     
