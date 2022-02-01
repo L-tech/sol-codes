@@ -23,7 +23,7 @@ contract Playlist {
     }
 
     function getSong(uint _index) view external returns(string memory, bool) {
-        Song storage song = songs[_index];
+        Song memory song = songs[_index];
         return(song.name, song.favourite);
     }
 }
