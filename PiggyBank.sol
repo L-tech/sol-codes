@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.4;
 contract PiggyBank {
-    address public owner;
+    address payable public owner;
     event Deposit(uint _amount, uint _time);
     event Withdrawal(uint _amount, uint _time);
     constructor() {
-        owner = msg.sender;
+        owner = payable(msg.sender);
     }
     modifier onlyOwner() {
         require(owner == msg.sender, "Access Denied");
