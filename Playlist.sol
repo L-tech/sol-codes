@@ -18,6 +18,10 @@ contract Playlist {
         songs[_index].name = _name;
     }
 
+    function updateSongStatus(uint _index, bool _favourite) external {
+        songs[_index].favourite = _favourite;
+    }
+
     function getSong(uint _index) view external returns(string memory, bool) {
         Song storage song = songs[_index];
         return(song.name, song.favourite);
