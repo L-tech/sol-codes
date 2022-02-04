@@ -47,4 +47,14 @@ contract YourCollectible is
     {
         super._burn(tokenId);
     }
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+
+    
 }
