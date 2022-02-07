@@ -62,6 +62,13 @@ contract StakingRewards {
         rewards[msg.sender] = 0;
         rewardToken.transfer(msg.sender, reward);
     }
+
+    function transferReward(address _recipient, uint _amount) external updateReward(msg.sender) {
+        uint reward = rewards[msg.sender];
+        require(reward >= _amount, "Insuffient Rewards");
+        rewards[msg.sender] -= _amount;
+        rewardToken.transfer(_recipient, _amount);
+    }
     
 }
 
