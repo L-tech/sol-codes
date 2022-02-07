@@ -2,7 +2,7 @@
 pragma solidity ^0.8.10;
 
 contract StakingRewards {
-    IERC20 public rewardsToken;
+    IERC20 public rewardToken;
     IERC20 public stakingToken;
 
     uint public rewardRate = 100;
@@ -15,9 +15,9 @@ contract StakingRewards {
     uint private _totalSupply;
     mapping(address => uint) private _balances;
 
-    constructor(address _stakingToken, address _rewardsToken) {
+    constructor(address _stakingToken, address _rewardToken) {
         stakingToken = IERC20(_stakingToken);
-        rewardsToken = IERC20(_rewardsToken);
+        rewardToken = IERC20(_rewardToken);
     }
 
     function rewardPerToken() public view returns (uint) {
@@ -60,8 +60,10 @@ contract StakingRewards {
     function getReward() external updateReward(msg.sender) {
         uint reward = rewards[msg.sender];
         rewards[msg.sender] = 0;
-        rewardsToken.transfer(msg.sender, reward);
+        rewardToken.transfer(msg.sender, reward);
     }
+
+    
 }
 
 interface IERC20 {
