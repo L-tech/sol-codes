@@ -62,7 +62,6 @@ contract StakingRewards {
         rewards[msg.sender] = 0;
         rewardToken.transfer(msg.sender, reward);
     }
-
     
 }
 
