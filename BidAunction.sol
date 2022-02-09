@@ -32,9 +32,7 @@ contract BidAunction {
         startAt = block.timestamp;
         expiresAt = block.timestamp + openPeriod;
         discountRate = _discountRate;
-
         require(_startingPrice >= _discountRate * openPeriod, "starting price < min");
-
         nft = IERC721(_nft);
         nftId = _nftId;
     }
