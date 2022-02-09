@@ -9,6 +9,7 @@ interface IERC721 {
     ) external;
 }
 
+
 contract BidAunction {
     uint private constant openPeriod = 7 days;
 
@@ -20,6 +21,8 @@ contract BidAunction {
     uint public immutable startAt;
     uint public immutable expiresAt;
     uint public immutable discountRate;
+
+    event NFTPurchased(address _address, uint _amount);
 
     constructor(
         uint _startingPrice,
@@ -48,6 +51,7 @@ contract BidAunction {
         uint price = getPrice();
         require(msg.value >= price, "ETH < price");
         nft.transferFrom(owner, msg.sender, nftId);
+        emit NFTPurchased(msg.sender, price);
         // Refund buyer with amount over the current price
         uint refund = msg.value - price;
         if (refund > 0) {
