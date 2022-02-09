@@ -54,6 +54,21 @@ contract BidAunction {
         selfdestruct(owner);
     }
 
+    function buy() external payable {
+        require(block.timestamp < expiresAt, "auction expired");
+
+        uint price = getPrice();
+        require(msg.value >= price, "ETH < price");
+
+        nft.transferFrom(owner, msg.sender, nftId);
+        // Refund buyer with amount over the current price
+        uint refund = msg.value - price;
+        if (refund > 0) {
+            payable(msg.sender).transfer(refund);
+        }
+        selfdestruct(owner);
+    }
+
 
     
 }
