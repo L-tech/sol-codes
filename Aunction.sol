@@ -62,5 +62,14 @@ contract Aunction {
         emit AuctionStarted(block.timestamp);
     }
     
+    function bid()) external payable isOpen() {
+        require(msg.value > highestBid, "Amount Lower than current bid");
+        if (highestBidder != address(0)) {
+            bids[highestBidder] += highestBid;
+        }
+        highestBidder = msg.sender;
+        highestBid = msg.value;
+        emit Bid(msg.sender, msg.value);
+    }
 
 }
