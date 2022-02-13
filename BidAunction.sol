@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
-
+// A simple contract that implement a dutch aunction system
+// A value is discounted based as time per passes by
+// The NFT is sold when someone pay the current value of the NFT as at the time purchase or more
+// If the buyers pays more than the value, a refund is initiated
 interface IERC721 {
     function transferFrom(
         address _from,
