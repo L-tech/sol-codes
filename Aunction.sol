@@ -39,7 +39,7 @@ contract Aunction {
     event End(address winner, uint amount);
     constructor(
         address _nft,
-        uint _nftId
+        uint _nftId,
         uint _startingBid
     ) {
         nft = IERC721(_nft);
@@ -53,16 +53,16 @@ contract Aunction {
         require(block.timestamp <= endSalePeriod, "Aunction Closed");
         _;
     }
-     function startAuction(uint _days) external {
+     function startAuction() external {
         require(!isOpen, "start");
         require(msg.sender == seller, "not seller");
         nft.transferFrom(msg.sender, address(this), nftId);
         isOpen = true;
-        endSalePeriod = block.timestamp +  days;
+        endSalePeriod = block.timestamp + 7 days;
         emit AuctionStarted(block.timestamp);
     }
     
-    function bid()) external payable isOpen() {
+    function bid() external payable isSaleOpen {
         require(msg.value > highestBid, "Amount Lower than current bid");
         if (highestBidder != address(0)) {
             bids[highestBidder] += highestBid;
@@ -70,6 +70,26 @@ contract Aunction {
         highestBidder = msg.sender;
         highestBid = msg.value;
         emit Bid(msg.sender, msg.value);
+    }
+
+    function refundBidders() external{
+        uint bidderBalance = bids[msg.sender];
+        bids[msg.sender] = 0;
+        payable(msg.sender).transfer(bidderBalance);
+        emit Withdraw(msg.sender, bidderBalance);
+    }
+
+    function end() external{
+        require(isOpen, "Sale not on");
+        require(block.timestamp >= endSalePeriod, "Can't end now");
+        isOpen = false;
+        if (highestBidder != address(0)) {
+            nft.safeTransferFrom(address(this), highestBidder, nftId);
+            seller.transfer(highestBid);
+        } else {
+            nft.safeTransferFrom(address(this), seller, nftId);
+        }
+        emit End(highestBidder, highestBid);
     }
 
 }
