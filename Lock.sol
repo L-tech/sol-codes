@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
-contract bin{
+contract Lock{
     uint32[] public o;
     uint32[] public s;
     function binarySearch(
