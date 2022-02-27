@@ -12,13 +12,6 @@ contract Pipeline {
         mapping(address=>bool) members;
     }
 
-    struct Talent {
-        string name;
-        string proficiency;
-        uint experience;
-        uint bucketId;
-    }
-
     struct ModBucket {
         string specialization;
         string level;
@@ -45,6 +38,7 @@ contract Pipeline {
         newBucket.size = _size;
         newBucket.manager = msg.sender;
         newBucket.skills = _skills;
+        bucketIndex += 1;
     }
 
     function addMemberToBucket(uint _bucketIndex, address _newMemAddr) external isBusketManager(_bucketIndex) returns(bool) {
@@ -54,7 +48,7 @@ contract Pipeline {
     }
 
     function getBucketsLists() external view returns(ModBucket[] memory){
-        ModBucket[] memory _buckets = new ModBucket[](bucketIndex);
+        ModBucket[] memory _buckets = new ModBucket[](bucketIndex+1);
         for (uint i = 0; i < bucketIndex+1; i++){
             ModBucket memory mb = ModBucket(bucketlist[i].specialization, bucketlist[i].level, bucketlist[i].fee, bucketlist[i].size, bucketlist[i].manager, bucketlist[i].skills);
             _buckets[i] = mb;
@@ -75,13 +69,9 @@ contract Pipeline {
         bucket.size = b.size;
         bucket.manager = b.manager;
         bucket.skills =  b.skills;
-        
     }
-
     function changeBucketManager(uint _bucketIndex, address _newManAddr) external isBusketManager(_bucketIndex) {
         Bucket storage b = bucketlist[_bucketIndex];
         b.manager = _newManAddr;
     }
-
-    
 }
